@@ -14,14 +14,25 @@ VOICES = {
 def speak(text: str, persona: str = "fan"):
     voice = VOICES.get(persona, "af_heart")
     start = time.time()
+
     generator = pipeline(text, voice=voice, speed=1.1)
-    audio_chunks = []
+
+    stream_started = False
+    audio_buffer = []
+
     for _, _, audio in generator:
-        audio_chunks.append(audio)
-    audio = np.concatenate(audio_chunks)
+        # scarta i primissimi micro-chunk di warmup
+        if not stream_started:
+            if len(audio) < 2000:
+                continue
+            stream_started = True
+
+        audio_buffer.append(audio)
+        sd.play(audio, samplerate=24000)
+        sd.wait()
+
     latency = time.time() - start
     print(f"TTS latency: {latency:.2f}s for {len(text)} chars")
-    sd.play(audio, samplerate=24000)
     
 if __name__ == "__main__":
     speak("Lautaro Martinez scores and Inter lead the derby!", "fan")
