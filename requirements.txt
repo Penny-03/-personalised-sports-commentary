@@ -7,3 +7,4 @@ requests
 google-generativeai
 mss 
 Pillow
+flask
