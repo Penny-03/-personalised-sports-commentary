@@ -46,6 +46,13 @@ Outputs from vision and API are merged into a single structured object:
   "recent_event": "Shot on target saved by goalkeeper"
 }
 ```
+## Requirments
+Requires Python 3.12 or lower and install the dependencies
+
+```
+pip install requirements.txt
+```
+
 
 
 
