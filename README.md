@@ -1,4 +1,4 @@
-# -personalised-sports-commentary
+# personalised-sports-commentary
 ## required installations
 
 - pip install kokoro soundfile sounddevice
