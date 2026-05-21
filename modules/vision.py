@@ -2,7 +2,7 @@ import google.generativeai as genai
 import json, re
 
 genai.configure(api_key="YOUR_GEMINI_KEY")
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 VISION_PROMPT = """
 You are analysing a sports broadcast frame.
