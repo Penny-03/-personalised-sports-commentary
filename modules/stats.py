@@ -33,8 +33,32 @@ def get_match_stats(fixture_id: int) -> dict:
     }
 
 if __name__ == "__main__":
-    fid = get_live_fixture_id("Inter")
+    fid = get_live_fixture_id("Inter") # Change here the match you want
     if fid:
         print(get_match_stats(fid))
     else:
         print("No live match found")
+
+
+#To test anytime replace the function get_live_fixture_id with the following
+#it will return all live matches and then you choose the one to get the feature from
+''' def get_live_fixture_id(team_name: str) -> int | None:
+    r = requests.get(
+        f"{BASE}/fixtures",
+        headers=HEADERS,
+        params={"live": "all"}
+    )
+
+    data = r.json().get("response", [])
+
+    print("LIVE MATCHES:")
+    for f in data:
+        home = f["teams"]["home"]["name"]
+        away = f["teams"]["away"]["name"]
+
+        print(home, "vs", away)
+
+        if team_name.lower() in [home.lower(), away.lower()]:
+            return f["fixture"]["id"]
+
+    return None'''
