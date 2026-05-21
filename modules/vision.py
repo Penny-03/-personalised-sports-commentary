@@ -3,7 +3,7 @@ import json, re
 
 import base64 #to test
 
-genai.configure(api_key="AIzaSyBlfKT1KQXbY-JpVZQJ59y6lARCb_eqMwM")
+genai.configure(api_key="AIzaSyDdm33KeBC6VDYs9aPeLys7quP9SYMaPXw")
 model = genai.GenerativeModel("gemini-3.5-flash")
 
 VISION_PROMPT = """

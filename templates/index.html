@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sports Commentary</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--border:#2a2a2a;--accent:#e8f040;--accent2:#40f0a0;--red:#f04060;--text:#f0f0f0;--muted:#666;--font-display:'Bebas Neue',sans-serif;--font-mono:'DM Mono',monospace;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--border);background:var(--surface)}
+.logo{font-family:var(--font-display);font-size:28px;letter-spacing:2px;color:var(--accent)}
+.logo span{color:var(--text)}
+.status-pill{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .3s}
+.status-pill.running{border-color:var(--accent2);color:var(--accent2)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:all .3s}
+.status-pill.running .status-dot{background:var(--accent2);box-shadow:0 0 8px var(--accent2);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+main{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 73px)}
+.sidebar{grid-row:1/3;border-right:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:24px}
+.section-label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+.scoreboard{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+.teams{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.team-name{font-family:var(--font-display);font-size:20px;flex:1}
+.score{font-family:var(--font-display);font-size:48px;color:var(--accent);letter-spacing:4px;padding:0 8px}
+.minute{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:8px}
+.minute span{color:var(--accent2)}
+.last-event{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px}
+.event-type{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:1px;margin-bottom:4px}
+.event-player{font-weight:500}
+.event-team{color:var(--muted);font-size:12px;margin-top:2px}
+.controls{display:flex;flex-direction:column;gap:10px}
+.btn{padding:12px 20px;border-radius:6px;border:none;cursor:pointer;font-family:var(--font-mono);font-size:13px;letter-spacing:1px;transition:all .2s;text-transform:uppercase}
+.btn-start{background:var(--accent);color:#000;font-weight:600}
+.btn-start:hover{background:#d4db38;transform:translateY(-1px)}
+.btn-stop{background:transparent;color:var(--red);border:1px solid var(--red)}
+.btn-stop:hover{background:var(--red);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:5px;font-family:var(--font-mono);font-size:13px;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.tts-toggle{display:flex;align-items:center;gap:10px;cursor:pointer}
+.toggle{width:36px;height:20px;background:var(--border);border-radius:10px;position:relative;transition:background .2s}
+.toggle.on{background:var(--accent2)}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s}
+.toggle.on::after{left:19px}
+.btn-save{background:var(--surface2);color:var(--text);border:1px solid var(--border);width:100%;margin-top:4px}
+.btn-save:hover{border-color:var(--accent);color:var(--accent)}
+.right-panel{display:flex;flex-direction:column;overflow:hidden}
+.vision-bar{padding:14px 24px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:12px;min-height:52px}
+.vision-tag{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:1px;white-space:nowrap;text-transform:uppercase}
+.vision-text{font-size:13px;color:var(--muted);font-style:italic}
+.vision-text.active{color:var(--text);font-style:normal}
+.commentary-feed{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:12px}
+.commentary-feed::-webkit-scrollbar{width:4px}
+.commentary-feed::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.comment-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;animation:slideIn .4s ease;position:relative;overflow:hidden}
+.comment-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.comment-card.analyst::before{background:var(--accent2)}
+.comment-card.beginner::before{background:#f0a040}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.comment-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.comment-persona{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.comment-card.analyst .comment-persona{color:var(--accent2)}
+.comment-card.beginner .comment-persona{color:#f0a040}
+.comment-time{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.comment-text{font-size:15px;line-height:1.5;font-weight:300}
+.log-panel{border-top:1px solid var(--border);background:var(--surface);max-height:140px;overflow-y:auto;padding:12px 24px}
+.log-line{font-family:var(--font-mono);font-size:11px;color:var(--muted);padding:2px 0;display:flex;gap:12px}
+.log-line.error{color:var(--red)}
+.log-line.system{color:var(--accent2)}
+.log-ts{color:#444;min-width:60px}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);gap:12px}
+.empty-icon{font-size:48px;opacity:.3}
+.empty-text{font-family:var(--font-mono);font-size:12px;letter-spacing:1px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">COMMENTARY<span>.AI</span></div>
+    <div class="status-pill" id="statusPill"><div class="status-dot"></div><span id="statusText">IDLE</span></div>
+    </header>
+    <main>
+      <aside class="sidebar">
+          <div><div class="section-label">Live Score</div>
+                <div class="scoreboard"><div class="teams">
+                        <div class="team-name" id="homeTeam">-</div>
+                                <div class="score" id="score">-</div>
+                                        <div class="team-name" id="awayTeam">-</div>
+                                              </div><div class="minute">Minute: <span id="minute">-</span></div></div>
+                                                  </div>
+                                                      <div><div class="section-label">Last Event</div>
+                                                            <div class="last-event">
+                                                                    <div class="event-type" id="eventType">-</div>
+                                                                            <div class="event-player" id="eventPlayer">Waiting for data...</div>
+                                                                                    <div class="event-team" id="eventTeam"></div>
+                                                                                          </div>
+                                                                                              </div>
+                                                                                                  <div><div class="section-label">Controls</div>
+                                                                                                        <div class="controls">
+                                                                                                                <button class="btn btn-start" id="btnStart" onclick="startPipeline()">Start Pipeline</button>
+                                                                                                                        <button class="btn btn-stop" id="btnStop" onclick="stopPipeline()" disabled>Stop</button>
+                                                                                                                              </div>
+                                                                                                                                  </div>
+                                                                                                                                      <div><div class="section-label">Settings</div>
+                                                                                                                                            <div class="form-group"><label>Team Name</label><input type="text" id="teamName" value="Inter"></div>
+                                                                                                                                                  <div class="form-group"><label>Persona</label><select id="persona"><option value="fan">Fan</option><option value="analyst">Analyst</option><option value="beginner">Beginner</option></select></div>
+                                                                                                                                                        <div class="form-group"><label>Commentary Every (s)</label><input type="number" id="commentaryInterval" value="20" min="10" max="120"></div>
+                                                                                                                                                              <div class="form-group"><label>Vision Capture Every (s)</label><input type="number" id="captureInterval" value="20" min="10" max="60"></div>
+                                                                                                                                                                    <div class="form-group"><label style="margin-bottom:10px">Voice (TTS)</label>
+                                                                                                                                                                            <div class="tts-toggle" onclick="toggleTTS()"><div class="toggle on" id="ttsToggle"></div><span style="font-size:13px" id="ttsLabel">Enabled</span></div>
+                                                                                                                                                                                  </div>
+                                                                                                                                                                                        <button class="btn btn-save" onclick="saveSettings()">Save Settings</button>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                              </aside>
+                                                                                                                                                                                                <div class="right-panel">
+                                                                                                                                                                                                    <div class="vision-bar"><span class="vision-tag">Vision</span><span class="vision-text" id="visionAction">Waiting for screen capture...</span></div>
+                                                                                                                                                                                                        <div class="commentary-feed" id="feed">
+                                                                                                                                                                                                              <div class="empty-state" id="emptyState"><div class="empty-icon">🎙️</div><div class="empty-text">Start the pipeline to hear commentary</div></div>
+                                                                                                                                                                                                                  </div>
+                                                                                                                                                                                                                      <div class="log-panel" id="log"></div>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                        </main>
+                                                                                                                                                                                                                        <script>
+                                                                                                                                                                                                                        let ttsOn=true,running=false;
+                                                                                                                                                                                                                        const feed=document.getElementById('feed'),log=document.getElementById('log');
+                                                                                                                                                                                                                        const es=new EventSource('/stream');
+                                                                                                                                                                                                                        es.onmessage=(e)=>{const evt=JSON.parse(e.data);if(evt.kind==='ping')return;handleEvent(evt);};
+                                                                                                                                                                                                                        function handleEvent(evt){const{kind,data,ts}=evt;const t=new Date(ts*1000).toLocaleTimeString();
+                                                                                                                                                                                                                          if(kind==='vision'){const el=document.getElementById('visionAction');el.textContent=data.action||'Analysing frame...';el.classList.toggle('active',!!data.action);updateScore(data);}
+                                                                                                                                                                                                                            if(kind==='stats'){updateScore(data);if(data.last_event_player){document.getElementById('eventType').textContent=data.last_event_type||'-';document.getElementById('eventPlayer').textContent=data.last_event_player;document.getElementById('eventTeam').textContent=data.last_event_team||'';}if(data.fixture_id)addLog('stats','Fixture: '+data.fixture_id,t);}
+                                                                                                                                                                                                                              if(kind==='commentary')addCommentary(data.text,data.persona,t);
+                                                                                                                                                                                                                                if(kind==='error')addLog('error','['+data.source+'] '+data.msg,t);
+                                                                                                                                                                                                                                  if(kind==='system')addLog('system',data.msg,t);
+                                                                                                                                                                                                                                    if(kind==='timing')addLog('log','groq '+data.groq_s+'s | tts '+data.tts_s+'s',t);
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                    function updateScore(data){if(data.home_team)document.getElementById('homeTeam').textContent=data.home_team;if(data.away_team)document.getElementById('awayTeam').textContent=data.away_team;if(data.home_score!=null)document.getElementById('score').textContent=data.home_score+' - '+data.away_score;if(data.match_minute)document.getElementById('minute').textContent=data.match_minute+"'";}
+                                                                                                                                                                                                                                    function addCommentary(text,persona,time){const empty=document.getElementById('emptyState');if(empty)empty.remove();const card=document.createElement('div');card.className='comment-card '+(persona||'fan');card.innerHTML='<div class="comment-meta"><span class="comment-persona">'+(persona||'fan')+'</span><span class="comment-time">'+time+'</span></div><div class="comment-text">'+text+'</div>';feed.appendChild(card);feed.scrollTop=feed.scrollHeight;}
+                                                                                                                                                                                                                                    function addLog(type,msg,time){const line=document.createElement('div');line.className='log-line '+type;line.innerHTML='<span class="log-ts">'+time+'</span><span>'+msg+'</span>';log.appendChild(line);log.scrollTop=log.scrollHeight;while(log.children.length>100)log.removeChild(log.firstChild);}
+                                                                                                                                                                                                                                    async function startPipeline(){const res=await fetch('/start',{method:'POST'});const data=await res.json();if(data.ok){running=true;setRunning(true);}}
+                                                                                                                                                                                                                                    async function stopPipeline(){await fetch('/stop',{method:'POST'});running=false;setRunning(false);}
+                                                                                                                                                                                                                                    function setRunning(on){document.getElementById('statusPill').className='status-pill'+(on?' running':'');document.getElementById('statusText').textContent=on?'LIVE':'IDLE';document.getElementById('btnStart').disabled=on;document.getElementById('btnStop').disabled=!on;}
+                                                                                                                                                                                                                                    function toggleTTS(){ttsOn=!ttsOn;document.getElementById('ttsToggle').className='toggle'+(ttsOn?' on':'');document.getElementById('ttsLabel').textContent=ttsOn?'Enabled':'Disabled';}
+                                                                                                                                                                                                                                    async function saveSettings(){const s={team_name:document.getElementById('teamName').value,persona:document.getElementById('persona').value,commentary_interval:parseInt(document.getElementById('commentaryInterval').value),capture_interval:parseInt(document.getElementById('captureInterval').value),tts_enabled:ttsOn};await fetch('/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(s)});addLog('system','Settings saved',new Date().toLocaleTimeString());}
+                                                                                                                                                                                                                                    </script>
+                                                                                                                                                                                                                                    </body>
+                                                                                                                                                                                                                                    </html>
