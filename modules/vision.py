@@ -1,7 +1,9 @@
 import google.generativeai as genai
 import json, re
 
-genai.configure(api_key="YOUR_GEMINI_KEY")
+import base64 #to test
+
+genai.configure(api_key="AIzaSyBgWB6LruJ9NFjoyodIVoxv4naO22mq9vs")
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 VISION_PROMPT = """
@@ -19,6 +21,11 @@ Return ONLY valid JSON with these fields:
 If you cannot read a field, use null.
 """
 
+# uncomment this to test it with an image 
+'''def capture_frame():
+    with open("test.png", "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")'''
+
 def analyse_frame(frame_b64: str) -> dict:
     response = model.generate_content([
         VISION_PROMPT,
@@ -31,7 +38,7 @@ def analyse_frame(frame_b64: str) -> dict:
     return {}
 
 if __name__ == "__main__":
-    from capture import capture_frame
+    from capture import capture_frame # comment this line to test
     frame = capture_frame()
     state = analyse_frame(frame)
     print(json.dumps(state, indent=2))
