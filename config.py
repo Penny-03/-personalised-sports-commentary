@@ -6,5 +6,5 @@ PERSONA = "fan"
 TEAM_NAME = "Inter"
 
 # ── Polling intervals (seconds) ───────────────────────────────────
-CAPTURE_INTERVAL = 30    # vision: screenshot every 30s
-STATS_INTERVAL   = 120   # stats API: every 2 minutes
+CAPTURE_INTERVAL = 15    # vision: screenshot every 15s
+STATS_INTERVAL   = 60   # stats API: every minutes

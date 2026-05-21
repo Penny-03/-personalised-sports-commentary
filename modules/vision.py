@@ -3,8 +3,8 @@ import json, re
 
 import base64 #to test
 
-genai.configure(api_key="AIzaSyBgWB6LruJ9NFjoyodIVoxv4naO22mq9vs")
-model = genai.GenerativeModel("gemini-2.5-flash")
+genai.configure(api_key="AIzaSyDdm33KeBC6VDYs9aPeLys7quP9SYMaPXw")
+model = genai.GenerativeModel("gemini-3.5-flash")
 
 VISION_PROMPT = """
 You are analysing a sports broadcast frame.
