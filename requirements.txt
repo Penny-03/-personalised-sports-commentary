@@ -1,0 +1,9 @@
+kokoro
+soundfile
+sounddevice
+torch 
+groq
+requests
+google-generativeai
+mss 
+Pillow
