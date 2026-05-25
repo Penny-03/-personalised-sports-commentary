@@ -1,30 +1,58 @@
-# personalised-sports-commentary
-## required installations
+# Real-Time personalized Football Commentary System
 
-- pip install kokoro soundfile sounddevice
-- also requires: pip install torch --index-url https://download.pytorch.org/whl/cpu
-- pip install groq
-- pip install requests
-- pip install google-generativeai
-- pip install mss Pillow
+A real-time AI system that watches a live football broadcast, understands what is happening using both vision and live match data, and generates a personalised audio commentary track on top of the game.
 
-## API KEYS
-- Groq: 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
-- Api Football: 80e09bb4d95617666c18d7690fade8b5 , v3.football.api-sports.io
-- Gemini: AIzaSyCaAUuRK86k7LPm8m80EtT0K_2BLIxZ-nA
+The system combines **screen capture**, **computer vision**, **live sports APIs**, **LLMs**, and **text-to-speech** to create an adaptive commentary experience tailored to different user personas.
 
-- curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent" \
-  -H 'Content-Type: application/json' \
-  -H 'X-goog-api-key: AIzaSyCaAUuRK86k7LPm8m80EtT0K_2BLIxZ-nA' \
-  -X POST \
-  -d '{
-    "contents": [
-      {
-        "parts": [
-          {
-            "text": "Explain how AI works in a few words"
-          }
-        ]
-      }
-    ]
-  }'
+
+## System Overview
+
+The pipeline consists of four main components:
+
+### 1. Screen Capture
+The system continuously captures frames from a live broadcast using screen capture tools.
+
+### 2. Vision Understanding
+Each frame is analysed using a vision model (Gemini 2.5 Flash) to extract:
+- On-pitch action (e.g. counterattack, corner, foul)
+- Visual context (e.g. crowded box, goalkeeper under pressure)
+- General game situation
+
+### 3. Live Stats Integration
+Structured match data is retrieved from the API-Footbal (v3.football.api-sports.io):
+- Scoreline
+- Match minute
+- Teams
+- Goal events
+- Match status
+
+This provides **ground truth** to complement visual interpretation.
+
+
+## Game State Fusion
+
+Outputs from vision and API are merged into a single structured object:
+
+
+```json
+{
+  "teams": {
+    "home": "Inter",
+    "away": "Milan"
+  },
+  "score": "2-1",
+  "minute": 67,
+  "visual_context": "Corner kick with crowded penalty area",
+  "recent_event": "Shot on target saved by goalkeeper"
+}
+```
+## Requirments
+Requires Python 3.12 or lower and install the dependencies
+
+```
+pip install requirements.txt
+```
+
+
+
+
