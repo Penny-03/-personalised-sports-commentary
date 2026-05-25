@@ -23,7 +23,7 @@ Do not start with 'I' or refer to yourself.
     response = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=80,
+        max_tokens=300,
         temperature=0.85,
     )
     return response.choices[0].message.content.strip()
